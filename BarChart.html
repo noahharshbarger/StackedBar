@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Allocation Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .button-container {
+            margin: 20px 0;
+        }
+        .button-container button {
+            margin-right: 10px;
+            padding: 5px 10px; /* Adjust padding to make buttons smaller */
+            font-size: 12px; /* Adjust font size to make buttons smaller */
+            cursor: pointer;
+        }
+        .chart-container {
+            width: 100%;
+            height: 600px; /* Adjust height as needed */
+            overflow-x: auto;
+        }
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        @media (max-width: 600px) {
+            .button-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .button-container button {
+                margin-bottom: 10px;
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button onclick="downloadChart()">Download Chart</button>
+    </div>
+    <div class="chart-container">
+        <canvas id="myChart"></canvas>
+    </div>
+    <script>
+        const labels = ['Portfolio'];
+        const colors = [
+            'rgba(224, 81, 59, 0.5)',
+            'rgba(65, 80, 231, 0.5)',
+            'rgba(82, 167, 94, 0.5)',
+            'rgba(250, 171, 89, 0.5)'
+        ];
+
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Apple',
+                    data: [30], // Example percentage
+                    backgroundColor: colors[0],
+                    marketValue: 30000 // Example market value
+                },
+                {
+                    label: 'NVIDIA',
+                    data: [20], // Example percentage
+                    backgroundColor: colors[1],
+                    marketValue: 20000 // Example market value
+                },
+                {
+                    label: 'Microsoft',
+                    data: [15], // Example percentage
+                    backgroundColor: colors[2],
+                    marketValue: 15000 // Example market value
+                },
+                {
+                    label: 'Amazon',
+                    data: [10], // Example percentage
+                    backgroundColor: colors[3],
+                    marketValue: 10000 // Example market value
+                },
+                {
+                    label: 'Google',
+                    data: [15], // Example percentage
+                    backgroundColor: colors[0],
+                    marketValue: 15000 // Example market value
+                },
+                {
+                    label: 'Tesla',
+                    data: [10], // Example percentage
+                    backgroundColor: colors[1],
+                    marketValue: 10000 // Example market value
+                }
+            ]
+        };
+
+        let config = {
+            type: 'bar',
+            data: data,
+            options: {
+                indexAxis: 'y', // This makes the chart horizontal
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Stock Allocation Chart'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.raw + '%';
+                                let marketValue = context.dataset.marketValue;
+                                if (marketValue) {
+                                    label += ` (Market Value: $${marketValue})`;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        stacked: true,
+                        max: 100, // Ensure the x-axis represents percentage
+                        title: {
+                            display: true,
+                            text: 'Percentage of Portfolio Allocation',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            display: false // Hide x-axis numbers
+                        },
+                        grid: {
+                            display: false // Hide x-axis gridlines
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Stocks',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                },
+            }
+        };
+
+        const myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
+
+        function downloadChart() {
+            const link = document.createElement('a');
+            link.href = myChart.toBase64Image();
+            link.download = 'chart.png';
+            link.click();
+        }
+    </script>
+</body>
+</html>
